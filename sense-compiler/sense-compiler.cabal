@@ -25,7 +25,10 @@ source-repository head
 
 library
   exposed-modules:
+      Field
+      Identifier
       Parser
+      TypeSystem
   other-modules:
       Paths_sense_compiler
   hs-source-dirs:

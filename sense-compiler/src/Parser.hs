@@ -1,9 +1,24 @@
 {-# LANGUAGE DeriveFunctor #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# LANGUAGE LambdaCase #-}
 
-{-# HLINT ignore "Use lambda-case" #-}
-
-module Parser where
+module Parser
+  ( Parser,
+    parse,
+    combine,
+    consecutive,
+    consecutiveNonEmpty,
+    sat,
+    char,
+    charIn,
+    string,
+    item,
+    empty,
+    (<|>),
+    space,
+    newline,
+    tab
+  )
+where
 
 import Control.Monad
 
@@ -80,7 +95,7 @@ parse (Parser p) = p
 item :: Parser Char
 item =
   Parser
-    ( \cs -> case cs of
+    ( \case
         "" -> []
         (c : cs) -> [(c, cs)]
     )
@@ -94,6 +109,9 @@ sat p = do
 char :: Char -> Parser Char
 char c = sat (c ==)
 
+charIn :: [Char] -> Parser Char
+charIn cs = sat (`elem` cs)
+
 string :: String -> Parser String
 string "" = return ""
 string (c : cs) = do
@@ -106,3 +124,20 @@ consecutive p = consecutive' p +++ return []
 
 consecutive' :: Parser a -> Parser [a]
 consecutive' p = do a <- p; as <- consecutive p; return (a : as)
+
+consecutiveNonEmpty :: Parser a -> Parser [a]
+consecutiveNonEmpty p = do
+  a <- p;
+  as <- consecutive p
+  return (a:as)
+
+-- BEGIN COMMON
+
+space :: Parser Char
+space = char ' '
+
+newline :: Parser Char
+newline = char '\n'
+
+tab :: Parser Char
+tab = char '\t' <|> do {space; space; space; space;} <|> do {space; space;}

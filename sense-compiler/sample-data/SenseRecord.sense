@@ -1,0 +1,7 @@
+data User(
+    firstName: String
+    lastName: String?
+    age: Int
+    height: Decimal?
+    skills: [String]
+)
