@@ -36,13 +36,13 @@ library
       Data.STranslator
       Data.SType
       Data.SVariable
+      Parse.DataType
       Parse.Field
       Parse.Function
       Parse.Identifier
       Parse.Parser
       Parse.SenseParser
       Parse.Type
-      Parse.TypeSystem
       Parse.Variable
       Validate.SenseValidator
   other-modules:

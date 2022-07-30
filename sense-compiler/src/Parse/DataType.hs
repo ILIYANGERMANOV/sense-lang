@@ -1,4 +1,4 @@
-module Parse.TypeSystem(
+module Parse.DataType(
   dataType
 ) where
 

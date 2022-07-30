@@ -6,8 +6,9 @@ import Data.STranslator (STranslator)
 import Data.SVariable (SVariable)
 
 data SThing
-  = TData {sData :: SData}
-  | TFunction {sFunction :: SFunction}
-  | TTranslator {sTranslator :: STranslator}
-  | TVariable {sVariable :: SVariable}
+  = TData {tData :: SData}
+  | TFunction {tFunction :: SFunction}
+  | TTranslator {tTranslator :: STranslator}
+  | TVariable {tVariable :: SVariable}
+  | TEmptyLine
   deriving (Show)
