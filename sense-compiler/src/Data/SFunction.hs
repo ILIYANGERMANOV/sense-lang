@@ -1,9 +1,10 @@
 module Data.SFunction where
 
 import Data.Identifier (Identifier (Identifier))
+import Data.SStatement
 import Data.SType
 
-{- 
+{-
 helloWorld :: String
 > "Hello, world!"
 
@@ -20,6 +21,7 @@ Admin> AccessToken
 -}
 data SFunction = SFunction
   { fId :: Identifier,
-    fSignature :: (SType, SType)
+    fSignature :: (SType, SType),
+    fStms :: [SCaseStatement]
   }
-  deriving Show
+  deriving (Show)

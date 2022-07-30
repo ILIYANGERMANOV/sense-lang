@@ -6,7 +6,7 @@ import Validate.SenseValidator
 import Data.CompileError
 
 loadTestData :: IO String
-loadTestData = readFile "sample-data/SenseRecord.sense"
+loadTestData = readFile "sample-data/Demo.sense"
 
 main :: IO ()
 main = putStrLn "Hello"

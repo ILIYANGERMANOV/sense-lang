@@ -9,6 +9,7 @@ import Data.SField
 import Data.SType
 import Parse.Identifier
 import Parse.Parser
+import Parse.Type
 
 {-
     field1: String
@@ -18,7 +19,7 @@ senseField = do
   tab
   identifier <- lowercaseIdentifier
   fieldDelimiter
-  fType <- fieldType
+  fType <- senseType
   newline
   return
     SField
@@ -30,44 +31,3 @@ senseField = do
     fieldDelimiter = do
       char ':'
       space
-
-fieldType :: Parser SType
-fieldType = do
-  -- TODO: Handle | (OR) type later
-  -- TODO: Handle SMap type later
-  array <|> optional <|> tupple <|> senseType
-  where
-    array :: Parser SType
-    array = do
-      char '['
-      sType <- senseType
-      char ']'
-      return SArray {arrType = sType}
-
-    optional :: Parser SType
-    optional = do
-      sType <- senseType
-      char '?'
-      return SOptional {maybeType = sType}
-
-    tupple :: Parser SType
-    tupple = do
-      char '('
-      fstType <- senseType
-      char ','
-      sndType <- senseType
-      char ')'
-      return STuple {fstType = fstType, sndType = sndType}
-
-senseType :: Parser SType
-senseType = primitive . idVal <$> uppercaseIdentifier
-
-primitive :: String -> SType
-primitive "Bool" = SBool
-primitive "String" = SString
-primitive "Int" = SInt
-primitive "Decimal" = SDecimal
-primitive "Unit" = SUnit
-primitive "Date" = SDate
-primitive "DateTime" = SDateTime
-primitive s = SDataRef {typeName = s}

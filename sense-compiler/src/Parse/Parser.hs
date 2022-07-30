@@ -7,11 +7,13 @@ module Parse.Parser
     combine,
     oneOrMany,
     zeroOrMany,
+    takeUntil,
     sat,
     char,
     charIn,
     string,
     item,
+    peek,
     empty,
     (<|>),
     space,
@@ -100,6 +102,14 @@ item =
         (c : cs) -> [(c, cs)]
     )
 
+peek :: Parser Char
+peek =
+  Parser
+    ( \case
+        "" -> []
+        cs -> [(head cs, cs)]
+    )
+
 -- satisfies the given predicate
 sat :: (Char -> Bool) -> Parser Char
 sat p = do
@@ -130,6 +140,16 @@ oneOrMany p = do
   a <- p
   as <- zeroOrMany p
   return (a : as)
+
+takeUntil :: Char -> Parser String
+takeUntil end = do
+  c <- peek
+  if c /= end
+    then do
+      c <- item
+      cs <- takeUntil end
+      return (c : cs)
+    else return ""
 
 -- BEGIN COMMON
 
