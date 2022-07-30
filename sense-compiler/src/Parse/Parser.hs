@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Parser
+module Parse.Parser
   ( Parser,
     parse,
     combine,

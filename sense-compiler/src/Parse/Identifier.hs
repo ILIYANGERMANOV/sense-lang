@@ -1,12 +1,12 @@
-module Identifier
-  ( Identifier (..),
+module Parse.Identifier
+  ( 
     uppercaseIdentifier,
     lowercaseIdentifier
   )
 where
 
 import Data.Char (isAlphaNum, isUpper, isAlpha)
-import Parser
+import Parse.Parser
   ( Parser,
     char,
     charIn,
@@ -17,11 +17,7 @@ import Parser
     space,
     (<|>),
   )
-
-newtype Identifier = Identifier
-  { idVal :: String
-  }
-  deriving (Show)
+import Data.Identifier
 
 uppercaseIdentifier :: Parser Identifier
 uppercaseIdentifier = do
