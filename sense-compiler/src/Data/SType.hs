@@ -13,7 +13,7 @@ data SType
   | SMap {mKey :: SType, mVal :: SType}
   | SArray {arrType :: SType}
   | SOptional {maybeType :: SType}
-  | STuple {_fst :: SType, s_nd :: SType}
+  | STuple {fstType :: SType, sndType :: SType}
   | SOr {orFst :: SType, orSnd :: SType}
   | SDataRef {typeName :: String}
   deriving (Show)

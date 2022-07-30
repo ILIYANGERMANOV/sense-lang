@@ -5,8 +5,8 @@ module Parse.Parser
   ( Parser,
     parse,
     combine,
-    consecutive,
-    consecutiveNonEmpty,
+    oneOrMany,
+    zeroOrMany,
     sat,
     char,
     charIn,
@@ -16,7 +16,7 @@ module Parse.Parser
     (<|>),
     space,
     newline,
-    tab
+    tab,
   )
 where
 
@@ -119,17 +119,17 @@ string (c : cs) = do
   string cs
   return (c : cs)
 
-consecutive :: Parser a -> Parser [a]
-consecutive p = consecutive' p +++ return []
+zeroOrMany :: Parser a -> Parser [a]
+zeroOrMany p = zeroOrMany' p +++ return []
 
-consecutive' :: Parser a -> Parser [a]
-consecutive' p = do a <- p; as <- consecutive p; return (a : as)
+zeroOrMany' :: Parser a -> Parser [a]
+zeroOrMany' p = do a <- p; as <- zeroOrMany p; return (a : as)
 
-consecutiveNonEmpty :: Parser a -> Parser [a]
-consecutiveNonEmpty p = do
-  a <- p;
-  as <- consecutive p
-  return (a:as)
+oneOrMany :: Parser a -> Parser [a]
+oneOrMany p = do
+  a <- p
+  as <- zeroOrMany p
+  return (a : as)
 
 -- BEGIN COMMON
 
@@ -140,4 +140,4 @@ newline :: Parser Char
 newline = char '\n'
 
 tab :: Parser Char
-tab = char '\t' <|> do {space; space; space; space;} <|> do {space; space;}
+tab = char '\t' <|> do { space; space; space; space } <|> do space; space

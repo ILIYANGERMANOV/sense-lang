@@ -25,14 +25,24 @@ source-repository head
 
 library
   exposed-modules:
+      Compile.SenseCompiler
+      Data.CompileError
       Data.Identifier
       Data.SData
       Data.SField
+      Data.SFunction
+      Data.SThing
+      Data.STranslator
       Data.SType
+      Data.SVariable
       Parse.Field
+      Parse.Function
       Parse.Identifier
       Parse.Parser
+      Parse.SenseParser
       Parse.TypeSystem
+      Parse.Variable
+      Validate.SenseValidator
   other-modules:
       Paths_sense_compiler
   hs-source-dirs:

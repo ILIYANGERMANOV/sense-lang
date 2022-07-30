@@ -1,17 +1,20 @@
-module Parse.Field where
+module Parse.Field
+  ( senseField,
+  )
+where
 
 import Data.Char (isUpper)
-import Parse.Parser
-import Data.SType
-import Data.SField
-import Parse.Identifier
 import Data.Identifier
+import Data.SField
+import Data.SType
+import Parse.Identifier
+import Parse.Parser
 
 {-
     field1: String
 -}
-fieldParser :: Parser SField
-fieldParser = do
+senseField :: Parser SField
+senseField = do
   tab
   identifier <- lowercaseIdentifier
   fieldDelimiter
@@ -31,24 +34,33 @@ fieldParser = do
 fieldType :: Parser SType
 fieldType = do
   -- TODO: Handle | (OR) type later
-  -- TODO: Handle Tupple
-  array <|> optional <|> parseSType
+  -- TODO: Handle SMap type later
+  array <|> optional <|> tupple <|> senseType
   where
     array :: Parser SType
     array = do
       char '['
-      sType <- parseSType
+      sType <- senseType
       char ']'
       return SArray {arrType = sType}
 
     optional :: Parser SType
     optional = do
-      sType <- parseSType
+      sType <- senseType
       char '?'
       return SOptional {maybeType = sType}
 
-parseSType :: Parser SType
-parseSType = primitive . idVal <$> uppercaseIdentifier
+    tupple :: Parser SType
+    tupple = do
+      char '('
+      fstType <- senseType
+      char ','
+      sndType <- senseType
+      char ')'
+      return STuple {fstType = fstType, sndType = sndType}
+
+senseType :: Parser SType
+senseType = primitive . idVal <$> uppercaseIdentifier
 
 primitive :: String -> SType
 primitive "Bool" = SBool

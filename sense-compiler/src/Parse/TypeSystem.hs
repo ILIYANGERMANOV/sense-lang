@@ -26,7 +26,7 @@ senseRecord = do
   id <- dataDeclartion
   char '('
   newline
-  fields <- consecutiveNonEmpty fieldParser
+  fields <- oneOrMany senseField
   char ')'
   return
     SData

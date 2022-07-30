@@ -10,8 +10,7 @@ import Parse.Parser
   ( Parser,
     char,
     charIn,
-    consecutive,
-    consecutiveNonEmpty,
+    zeroOrMany,
     newline,
     sat,
     space,
@@ -22,13 +21,13 @@ import Data.Identifier
 uppercaseIdentifier :: Parser Identifier
 uppercaseIdentifier = do
   c <- sat isUpper
-  cs <- consecutive identifierSymbol
+  cs <- zeroOrMany identifierSymbol
   return Identifier {idVal = c : cs}
 
 lowercaseIdentifier :: Parser Identifier
 lowercaseIdentifier = do
   c <- sat (\c -> isAlpha c && (not . isUpper $ c))
-  cs <- consecutive identifierSymbol
+  cs <- zeroOrMany identifierSymbol
   return Identifier {idVal = c : cs}
 
 identifierSymbol :: Parser Char
