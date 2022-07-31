@@ -80,6 +80,7 @@ validatePass -- "LoginReq(email, pass)" --> sendLoginReq
 It's a common use-case to do validation, send HTTP requests and based on their response execute different logic.
 Here's how this can be implemented in Sense.  
 
+**SmartAuthenticate.sense**  
 ```sense
 inputEmail :: String
 > inputField("email")  
