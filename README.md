@@ -166,8 +166,6 @@ program :: LoginReq | RegisterReq
   
 passFlow :: LoginPass | RegPass -> LoginReq | RegisterReq
 |> inputPass |> validatePass
-  lReq: LoginReq> lReq
-  rReq: RegisterReq> rReq
   Invalid> passFlow() // repeat flow
 ``` 
   
