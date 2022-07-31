@@ -158,7 +158,7 @@ pass, type> length(pass) > 6
 
 @Main  
 program :: LoginReq | RegisterReq
-> inputEmail |> validateEmail
+|> inputEmail |> validateEmail
   Valid|> sendCheckEmailReq
     Taken|> login |> passFlow
     Available|> register |> passFlow
