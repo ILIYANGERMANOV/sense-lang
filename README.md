@@ -37,7 +37,7 @@ Sense purpose is to create software fast and express domain (business) logic by 
 
 ## Sense Ideology
 
-Every program is essentially a [domain data](https://en.wikipedia.org/wiki/Domain-driven_design) representation of a problem fed into a [chain of functions](https://en.wikipedia.org/wiki/Function_composition) that transforms input `A->B->C->N` and producing [side-effects](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) along the way.
+Every program is essentially a [domain data](https://en.wikipedia.org/wiki/Domain-driven_design) representation of a problem fed into a [chain of functions](https://en.wikipedia.org/wiki/Function_composition) that transforms input `A->B->C->N` and produces [side-effects](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) along the way.
   
 Sense is designed to easily model any domain into `data`, define your domain logic into `f :: A -> B | C` and handle side-effects (IO, randomness) and `$(state)` gracefully.
   
@@ -118,7 +118,7 @@ The |> operator feeds a value from the left side to a function on the rigth side
 #### Immutable `let`
 Declare: `let varName: VarType = value`.
 
-#### Mutable state
+#### Mutable `state`
 Declare: `state x: X =  initalValue`.
 Update: `x = newValue`.
 
