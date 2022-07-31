@@ -80,7 +80,7 @@ validatePass -- "LoginReq(email, pass)" --> sendLoginReq
 It's a common use-case to do validation, send HTTP requests and based on their response execute different logic.
 Here's how this can be implemented in Sense.  
 
-```
+```sense
 inputEmail :: String
 > inputField("email")  
 
@@ -159,16 +159,16 @@ pass, type> length(pass) > 6
 program :: LoginReq | RegisterReq
 > inputEmail |> validateEmail
     Valid|> sendCheckEmailReq
-      Taken|> login |> inputPass
-      Available|> register |> inputPass
-      HttpError> program()
-  Invalid> program()
+      Taken|> login |> passFlow
+      Available|> register |> passFlow
+      HttpError> program() // restart
+  Invalid> program() // restart
   
 passFlow :: LoginPass | RegPass -> LoginReq | RegisterReq
 |> inputPass |> validatePass
   lReq: LoginReq> lReq
   rReq: RegisterReq> rReq
-  Invalid> passFlow()
+  Invalid> passFlow() // repeat flow
 ``` 
   
 ## Sense Syntax
