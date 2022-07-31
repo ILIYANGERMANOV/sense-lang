@@ -37,12 +37,12 @@ Sense purpose is to create software fast and express domain (business) logic by 
 
 ## Sense Ideology
 
-Every program is essentially a [domain data](https://en.wikipedia.org/wiki/Domain-driven_design) representation of a problem fed into a [chain of functions](https://en.wikipedia.org/wiki/Function_composition) that transformings input from `A->B->C->N` and producing [side-effects](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) along the way.
+Every program is essentially a [domain data](https://en.wikipedia.org/wiki/Domain-driven_design) representation of a problem fed into a [chain of functions](https://en.wikipedia.org/wiki/Function_composition) that transforms input `A->B->C->N` and producing [side-effects](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) along the way.
   
 Sense is designed to easily model any domain into `data`, define your domain logic into `f :: A -> B | C` and handle side-effects (IO, randomness) and `$(state)` gracefully.
   
 At the core of Sense is decision-makin, the `CASE`: what to do when case `X` happen and what can happen when you do `Y` operation.
-To minimize confusion, we'll assume that every program can be represented by a graph of functions (decisions) and analyze a concrete example.
+To minimize confusion, we'll assume that every program can be represented by a **graph of functions (decisions)** and analyze a concrete example.
 
 **Login/Register email example**
   
