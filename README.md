@@ -41,7 +41,141 @@ Every program is essentially a [domain data](https://en.wikipedia.org/wiki/Domai
   
 Sense is designed to easily model any domain into `data`, define your domain logic into `f :: A -> B | C` and handle side-effects (IO, randomness) and `$(state)` gracefully.
   
-At the core of Sense is decision-makin, the `CASE`: what to do when case `X` happen and what can happen when you do `Y` operation.
+## Sense Syntax
+
+### OR types `x: A | B | C`
+Meaning that `x` can be of either type `A`, `B` or `C`
+
+### Case-matching `a: A> {code}`
+Executes `{code}` with an argument `a` if it matches type `A`.
+
+Case Syntax: `argName (optional): ArgType (optional)> {code}`
+
+> It'll make more sense after you see [Functions](###Functions) and some examples.
+
+#### Case-matching Tips:
+- `T>`: execute this line when the case is of type T without caring about its value
+- `>`: execute this line in all cases (the same as Unit>
+- Cases can be nested with tabulation like that:
+```
+x > 10
+ True> x == 13
+   True> "It's 13."
+   False> "It's greater than 10 and not 13."
+ False> "It's less than 10."
+```
+
+### Functions `f :: Input -> Output`
+
+#### Signature
+- `functionName :: A, B, C -> T`
+`functionName` is a function that accepts `A`, `B` and `C` types and returns `T` as output.
+
+- `version :: String`
+`version` is a function that accepts `Unit` (nothing as input) and returns `String`
+
+> Unit = nothing
+
+#### Body
+Our first Sense function:
+```
+helloWorld :: Unit
+> print("Hello, world")
+```
+
+And a more realistic example:
+```
+userStatus :: User | Admin -> String
+User> "Basic user"
+adm: Admin> let level = adm.accessLevel
+> adm.isActive
+  True> "Active admin, level " + level
+  False> "Inactive admin, level " + level
+```
+
+> The last line of case in a function always returns value and must match the function return type.
+
+
+#### Calling functions
+
+To invoke a function simply `f(arg1, arg2, ... , argN)`.
+
+#### Function Composition `|>`
+```
+f :: A -> B
+g :: B -> C
+h :: C -> D
+
+comp :: A -> C
+|> f |> g |> h
+// equivalent to a> f(a) |> g |> h
+```
+
+The |> operator feeds a value from the left side to a function on the rigth side.
+
+### Variables
+
+#### Immutable `let`
+Declare: `let varName: VarType = value`.
+
+#### Mutable state
+Declare: `state x: X =  initalValue`.
+Update: `x = newValue`.
+
+#### Use global variables
+```
+let step = 10
+state counter = 0
+
+$(step, counter)
+stepUp :: Int
+> counter += step
+> counter
+```
+
+### Primitives
+- `Int`: integer (long size)
+- `Decimal`: double precision
+- `String`: just a string
+- `Unit`: nothing
+
+### Primitive modifiers
+
+#### `T?`: optional
+Optional value of type `T`. You can case-match via:
+```
+doubleOrZero :: Int? -> Int
+x> x * 2 // non-null optional
+null> 0 // optional is null
+```
+
+#### Tupple `(A, B)`
+Self-explanatory will document later.
+
+#### Array `[T]`
+Self-explanatory will document later.
+
+### Data types data
+```
+data BasicRole
+data AdminRole
+
+data User(
+  firstName: String
+  lastName: String?
+  role: BasicRole | AdminRole
+  friends: [User]
+  monthYear: (Int, Int)
+  height: Decimal
+)
+```
+
+### Sense Std Library
+Everything else like `Bool`, `for`, `Map`, `Stack`, `Graph`, `map`, `filter`, `DateTime`, etc is included with the standard library.
+
+## Sense Demo
+
+At the core of Sense is decision-makig, the "case-matching": what to do when case `X` happen and what can happen when you do `Y` operation.
 To minimize confusion, we'll assume that every program can be represented by a **graph of functions (decisions)** and analyze a concrete example.
 
 **Login/Register email example**
@@ -169,11 +303,18 @@ passFlow :: LoginPass | RegPass -> LoginReq | RegisterReq
 |> inputPass |> validatePass
   Invalid> passFlow() // repeat flow
 ``` 
-  
-## Sense Syntax
 
 ## Try Sesnse
 
+Will host simple Sense playground when the Sense Compiler is ready.
+
 ## Contribute
+
+Does SenseLang make sense to you?
+Help us make it better:
+- give feedback
+- contribute
+- join the team
+- help us find funding
 
 ### _WIP: Have feedback? Want to join the project? Please, drop me a line at `iliyan.germanov971@gmail.com`._  
