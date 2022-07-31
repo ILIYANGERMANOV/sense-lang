@@ -169,6 +169,8 @@ data User(
   height: Decimal
 )
 ```
+  
+> All data fields in Sense are **immutable**.  
 
 ### Sense Std Library
 Everything else like `Bool`, `for`, `Map`, `Stack`, `Graph`, `map`, `filter`, `DateTime`, etc is included with the standard library.
