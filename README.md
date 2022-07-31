@@ -148,7 +148,7 @@ data LoginReq(
   pass: String
 )  
   
-validatePass :: (String, LoginPass | RegPass) -> LoginReq | RegisterReq | Invalid
+validatePass :: String, LoginPass | RegPass -> LoginReq | RegisterReq | Invalid
 pass, type> length(pass) > 6
   True> type // valid password
     LoginPass> LoginReq(email=type.email, pass=pass)
