@@ -47,7 +47,7 @@ Sense is designed to easily model any domain into `data`, define your domain log
 Meaning that `x` can be of either type `A`, `B` or `C`
 
 ### Case-matching `a: A> {code}`
-Executes `{code}` with an argument `a` if it matches type `A`.
+Executes `{code}` with an argument `a` if it matches type `A`. Used to match `|` OR types - something like a weird `if`.
 
 Case Syntax: `argName (optional): ArgType (optional)> {code}`
 
