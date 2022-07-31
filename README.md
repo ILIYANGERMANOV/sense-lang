@@ -5,7 +5,7 @@
 > "Programming is a game of information and logic, not of libraries, frameworks and terminology."\
 > — <cite>Iliyan Germanov, creator of SenseLang<cite>
 
-_:warning: SenseLang is in ideation phase and everything may change, disappear or be discontinued if there's no point of doing it. Feedback, contributions and support are very welcome! :heavy_check_mark:_
+_:warning: SenseLang is in ideation phase and everything may change, disappear or be discontinued if there's no point of it. Feedback, contributions and support are very welcome! :heavy_check_mark:_
   
 ## Motivation
 
@@ -19,7 +19,7 @@ Sense purpose is to create software fast and express domain (business) logic by 
 
 **Benefits**
 - **Easy to learn:** minimal and simple syntax.
-- **Focus only on what matters:** write domain logic and algorithms only.
+- **Focus only on what matters:** write only what matters - domain logic and algorithms.
 - **Platform agnostic:** Android, iOS, Web, Desktop, Backend
 - **Frameworks/libraries agnostic:** you can target which libs/frameworks you want and the Sense Compiler will generate the code for you.
 
@@ -39,39 +39,91 @@ Sense purpose is to create software fast and express domain (business) logic by 
 
 Every program is essentially a [domain data](https://en.wikipedia.org/wiki/Domain-driven_design) representation of a problem fed into a [chain of functions](https://en.wikipedia.org/wiki/Function_composition) that transforms input `A->B->C->N` and produces [side-effects](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) along the way.
   
-Sense is designed to easily model any domain into `data`, define your domain logic into `f :: A -> B | C` and handle side-effects (IO, randomness) and `$(state)` gracefully.
+Sense is designed to easily model any domain into `data`, express your domain logic into functions with cases `f :: A -> B | C`, handle side-effects (IO) and `$(state)` gracefully.
   
 ## Sense Syntax
+
+If you're not familiar with Haskell and FP, Sense's syntax will not make sense to you at first. So take a deep breath and let's begin with an example.
+
+```
+readUserAge :: Int
+
+isAdult :: Int -> Bool
+age> age > 18
+
+data WithAlcohol
+data NoAlcohol
+
+cocktailType :: Bool -> WithAlcohol | NoAlcohol
+adult > if(adult)
+  True> WithAlcohol
+  False> NoAlcohol
+
+serveCocktail :: WithAlcohol | NoAlcohol -> String
+WithAlcohol> "Adults cocktail." 
+NoAlcohol> "Kids cocktail."
+
+@Main
+cocktailMixer :: Unit
+|> readUserAge |> isAdult |> cocktailType
+|> serveCocktail |> print
+```
 
 ### OR types `x: A | B | C`
 Meaning that `x` can be of either type `A`, `B` or `C`
 
-### Case-matching `a: A> {code}`
+```mermaid
+graph LR;
+
+x("x :: A | B | C")
+A(A)
+B(B)
+C(C)
+f("f :: A | B | C -> String")
+
+x -- "Case 1" --> A
+x -- "Case 2" --> B
+x -- "Case 3" --> C
+
+A --> f
+B --> f
+C --> f
+```
+
+### Case-matching `a:A> {code}`
+
+```
+f :: A | B | C -> String
+a:A> "Case A: " + a
+B> "Case B"
+C> "Case C"
+```
+
+
 Executes `{code}` with an argument `a` if it matches type `A`. Used to match `|` OR types - something like a weird `if`.
 
-Case Syntax: `argName (optional): ArgType (optional)> {code}`
+Case Syntax: `argName(optional) : ArgType (optional)> {code}`
 
-> It'll make more sense after you see [Functions](###Functions) and some examples.
-
-#### Case-matching Tips:
-- `T>`: execute this line when the case is of type T without caring about its value
-- `>`: execute this line in all cases (the same as Unit>
-- Cases can be nested with tabulation like that:
+#### Example
 ```
-x > 10
- True> x == 13
-   True> "It's 13."
-   False> "It's greater than 10 and not 13."
- False> "It's less than 10."
+sayNumber :: Int -> String
+x> if(x > 10)
+  True> if(x == 13)
+    True> log("The number is 13!") 
+    > "It's 13."
+    False> "It's greater than 10 and not 13."
+  False> "It's less than 10."
 ```
 
 ### Functions `f :: Input -> Output`
 
 #### Signature
 - `functionName :: A, B, C -> T`
+
 `functionName` is a function that accepts `A`, `B` and `C` types and returns `T` as output.
 
 - `version :: String`
+
 `version` is a function that accepts `Unit` (nothing as input) and returns `String`
 
 > Unit = nothing
@@ -88,12 +140,12 @@ And a more realistic example:
 userStatus :: User | Admin -> String
 User> "Basic user"
 adm: Admin> let level = adm.accessLevel
-> adm.isActive
+> if(adm.isActive)
   True> "Active admin, level " + level
   False> "Inactive admin, level " + level
 ```
 
-> The last line of case in a function always returns value and must match the function return type.
+> The last line of case in a function always returns a value.
 
 
 #### Calling functions
@@ -111,33 +163,35 @@ comp :: A -> C
 // equivalent to a> f(a) |> g |> h
 ```
 
-The |> operator feeds a value from the left side to a function on the rigth side.
+The `|>` operator feeds a value from the left side to a function on the rigth side.
 
 ### Variables
 
 #### Immutable `let`
-Declare: `let varName: VarType = value`.
+- Declare: `let varName: VarType = value`.
+- Read, just: `varName`
 
 #### Mutable `state`
-Declare: `state x: X =  initalValue`.
-Update: `x = newValue`.
+- Declare: `state x: X =  initalValue`.
+- Read, just: `x`
+- Update: `x = newValue`.
 
-#### Use global variables
+#### Global state & variables
 ```
 let step = 10
 state counter = 0
 
-$(step, counter)
+$(step, counter) // gives access to "step" and "counter"
 stepUp :: Int
 > counter += step
 > counter
 ```
 
 ### Primitives
-- `Int`: integer (long size)
-- `Decimal`: double precision
-- `String`: just a string
-- `Unit`: nothing
+- `Int`: integer (long size).
+- `Decimal`: double precision.
+- `String`: just a string.
+- `Unit`: nothing.
 
 ### Primitive modifiers
 
@@ -178,6 +232,8 @@ Everything else like `Bool`, `for`, `Map`, `Stack`, `Graph`, `map`, `filter`, `D
 ## Sense Demo
 
 At the core of Sense is decision-makig, the "case-matching": what to do when case `X` happen and what can happen when you do `Y` operation.
+
+
 To minimize confusion, we'll assume that every program can be represented by a **graph of functions (decisions)** and analyze a concrete example.
 
 **Login/Register email example**
@@ -228,7 +284,7 @@ data Invalid
   
 validateEmail :: String -> ValidEmail | Invalid
 // pseudo validation  
-email> contains('@', email) && length(email) > 3
+email> if(contains('@', email) && length(email) > 3)
   True> ValidEmail(email)
   False> Invalid
 
@@ -241,7 +297,7 @@ data Available(
   
 sendCheckEmailReq :: ValidEmail -> Taken | Available | HttpErr 
 valid> send("/checkEmail", valid)
-  response: Success> response.body == "taken"
+  response: Ok> if(response.body == "taken")
     True> Taken(email)
     False> Available(email)
     // HttpErr> case can be skipped
@@ -286,7 +342,7 @@ data LoginReq(
 )  
   
 validatePass :: String, LoginPass | RegPass -> LoginReq | RegisterReq | Invalid
-pass, type> length(pass) > 6
+pass, type> if(length(pass) > 6)
   True> type // valid password
     LoginPass> LoginReq(email=type.email, pass=pass)
     ReqPass> RegisterReq(email=type.email, pass=pass)
