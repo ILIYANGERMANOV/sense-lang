@@ -49,7 +49,7 @@ To minimize confusion, we'll assume that every program can be represented by a g
 ```mermaid
 graph LR;
 
-emailInput(emailInput)  
+emailInput(inputEmail)  
 validateEmail(validateEmail)  
 sendCheckEmailReq(sendCheckEmailReq)  
 login(login)
@@ -63,12 +63,12 @@ emailInput -- "email: String" --> validateEmail
 validateEmail -- "Valid(email)" --> sendCheckEmailReq
 validateEmail -- "Invalid" --> emailInput  
   
-sendCheckEmailReq -- "Taken" --> login
-sendCheckEmailReq -- "Available" --> register
+sendCheckEmailReq -- "Taken(email)" --> login
+sendCheckEmailReq -- "Available(email)" --> register
 sendCheckEmailReq -- "HTTPErr" --> emailInput
   
-login -- "(Email, LoginPassInput)" --> inputPass
-register -- "(Email, RegPassInput)" --> inputPass  
+login -- "LoginPass(email)" --> inputPass
+register -- "RegPass(email)" --> inputPass  
 
 inputPass -- "pass: String, LoginPass | RegPass" --> validatePass
 validatePass -- "Invalid, LoginPass | RegPass" --> inputPass
@@ -79,8 +79,97 @@ validatePass -- "LoginReq(email, pass)" --> sendLoginReq
   
 It's a common use-case to do validation, send HTTP requests and based on their response execute different logic.
 Here's how this can be implemented in Sense.  
+
+```
+inputEmail :: String
+> inputField("email")  
+
+data ValidEmail(
+ email: String
+)
+data Invalid  
   
+validateEmail :: String -> ValidEmail | Invalid
+// pseudo validation  
+email> contains('@', email) && length(email) > 3
+  True> ValidEmail(email)
+  False> Invalid
+
+data Taken(
+  email: String
+)
+data Available(
+  email: String
+)
   
+sendCheckEmailReq :: ValidEmail -> Taken | Available | HttpErr 
+valid> send("/checkEmail", valid)
+  response: Success> response.body == "taken"
+    True> Taken(email)
+    False> Available(email)
+    // HttpErr> case can be skipped
+ 
+data LoginUI
+data RegisterUI
+data None  
+data UIState(
+  state: LoginUI | RegisterUI | None
+)
+
+state uiState = UIState(None)  
+ 
+data LoginPass(
+  email: String
+)
+data RegPass(
+  email: String
+)  
+  
+$(uiState)  
+login :: Taken -> LoginPass 
+taken> uiState = LoginUI // modify state
+> LoginPass(taken.email)
+  
+$(uiState)
+register :: Available -> RegPass
+avail> uiState = RegisterUI
+> RegPass(avail.email)
+
+inputPass :: LoginPass | RegPass -> (String, LoginPass | RegPass)
+login: LoginPass> (inputField("login_pass"), login)
+reg: RegPass> (inputField("reg_pass"), reg)  
+
+data RegisterReq(
+  email: String
+  pass: String
+)
+data LoginReq(
+  email: String
+  pass: String
+)  
+  
+validatePass :: (String, LoginPass | RegPass) -> LoginReq | RegisterReq | Invalid
+pass, type> length(pass) > 6
+  True> type // valid password
+    LoginPass> LoginReq(email=type.email, pass=pass)
+    ReqPass> RegisterReq(email=type.email, pass=pass)
+  False> Invalid
+
+@Main  
+program :: LoginReq | RegisterReq
+> inputEmail |> validateEmail
+    Valid|> sendCheckEmailReq
+      Taken|> login |> inputPass
+      Available|> register |> inputPass
+      HttpError> program()
+  Invalid> program()
+  
+passFlow :: LoginPass | RegPass -> LoginReq | RegisterReq
+|> inputPass |> validatePass
+  lReq: LoginReq> lReq
+  rReq: RegisterReq> rReq
+  Invalid> passFlow()
+``` 
   
 ## Sense Syntax
 
@@ -88,4 +177,4 @@ Here's how this can be implemented in Sense.
 
 ## Contribute
 
-### _WIP: Have feedback? Want to join the project? Please, drop me a line at iliyan.germanov971@gmail.com_  
+### _WIP: Have feedback? Want to join the project? Please, drop me a line at `iliyan.germanov971@gmail.com`._  
