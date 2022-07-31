@@ -158,10 +158,10 @@ pass, type> length(pass) > 6
 @Main  
 program :: LoginReq | RegisterReq
 > inputEmail |> validateEmail
-    Valid|> sendCheckEmailReq
-      Taken|> login |> passFlow
-      Available|> register |> passFlow
-      HttpError> program() // restart
+  Valid|> sendCheckEmailReq
+    Taken|> login |> passFlow
+    Available|> register |> passFlow
+    HttpError> program() // restart
   Invalid> program() // restart
   
 passFlow :: LoginPass | RegPass -> LoginReq | RegisterReq
